@@ -53,3 +53,16 @@ Create a least-privilege IAM user for the Render API rather than reusing
 personal AWS credentials. Grant only S3 access to the two application buckets
 and `sqs:SendMessage` for the rendering queue. Add the credentials only as
 Render secret environment variables.
+
+## Free frontend deployment
+
+Render requires payment verification before creating this Blueprint. As a
+free alternative, the repository includes a GitHub Pages workflow for the
+React frontend. Pushes to `main` build and publish `frontend/dist`.
+
+The public frontend URL is:
+
+`https://rohith0088.github.io/EC2-batch-rendering/`
+
+The frontend continues to use the existing EC2 API at
+`http://18.60.233.189:5000`. The backend and three EC2 workers remain on AWS.
