@@ -1,6 +1,7 @@
 name: Deploy frontend to GitHub Pages
 
 on:
+  # Publish the production build after every frontend change.
   push:
     branches: [main]
     paths:
