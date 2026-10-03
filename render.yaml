@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: ec2-batch-rendering-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: AWS_REGION
+        sync: false
+      - key: INPUT_BUCKET
+        sync: false
+      - key: OUTPUT_BUCKET
+        sync: false
+      - key: QUEUE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_SESSION_TOKEN
+        sync: false
+
+  - type: web
+    name: ec2-batch-rendering-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false

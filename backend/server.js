@@ -21,7 +21,8 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
+const allowedOrigin = process.env.CORS_ORIGIN;
+app.use(cors(allowedOrigin ? { origin: allowedOrigin } : undefined));
 app.use(express.json());
 
 const s3 = new S3Client({
@@ -178,6 +179,8 @@ app.get("/", (req, res) => {
 });
 
 
-app.listen(5000, () => {
-  console.log("Backend running on port 5000");
+const port = Number(process.env.PORT || 5000);
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Backend running on port ${port}`);
 });

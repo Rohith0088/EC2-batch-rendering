@@ -32,3 +32,24 @@ The current deployment uses:
 - SQS queue: `batch-rendering-queue`
 
 Do not commit `.env`, AWS access keys, or `node_modules`.
+
+## Render deployment
+
+The repository includes [`render.yaml`](./render.yaml) for deploying the API and
+frontend as two Render services. The EC2 workers remain connected to the same
+SQS queue and continue processing jobs from S3.
+
+The Render API requires these environment variables:
+
+- `AWS_REGION`
+- `INPUT_BUCKET`
+- `OUTPUT_BUCKET`
+- `QUEUE_URL`
+- `CORS_ORIGIN` (the deployed Render frontend URL)
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+Create a least-privilege IAM user for the Render API rather than reusing
+personal AWS credentials. Grant only S3 access to the two application buckets
+and `sqs:SendMessage` for the rendering queue. Add the credentials only as
+Render secret environment variables.
