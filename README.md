@@ -33,6 +33,27 @@ The current deployment uses:
 
 Do not commit `.env`, AWS access keys, or `node_modules`.
 
+### Worker output frame
+
+Each completed object in the output bucket is a PNG details frame containing:
+
+- The job ID
+- `AWS EC2 Spot Fleet`
+- The worker hostname
+- The input object key
+- `SQS Distributed Job`
+- `Status: COMPLETED`
+
+After pulling a worker update, apply the same file on each EC2 worker and
+restart its service:
+
+```bash
+cd ~/worker
+curl -fsSL https://raw.githubusercontent.com/Rohith0088/EC2-batch-rendering/main/worker/worker.py -o worker.py
+sudo systemctl restart batch-worker
+sudo systemctl is-active batch-worker
+```
+
 ## Render deployment
 
 The repository includes [`render.yaml`](./render.yaml) for deploying the API and
