@@ -1,4 +1,4 @@
-# EC2 Batch Rendering
+# EC2 Batch Rendering 
 
 React frontend, Node.js backend, SQS queue, S3 buckets, and EC2 workers for asynchronous image rendering.
 
