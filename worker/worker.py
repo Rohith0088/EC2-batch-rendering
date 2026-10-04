@@ -1,7 +1,10 @@
 import boto3
 import json
 import time
+import socket
 from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 import os
 import logging
 from botocore.exceptions import BotoCoreError
@@ -30,6 +33,43 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 logger.info("Worker started...")
+
+
+def render_details(output_file, job_id, input_key):
+    """Create the completed batch-render details frame uploaded to S3."""
+    canvas = Image.new("RGB", (1280, 720), "white")
+    draw = ImageDraw.Draw(canvas)
+
+    font_paths = (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+    )
+    font = ImageFont.load_default()
+    for font_path in font_paths:
+        if os.path.exists(font_path):
+            font = ImageFont.truetype(font_path, 16)
+            break
+
+    lines = [
+        f"BATCH RENDERED FRAME - {job_id}",
+        "",
+        "AWS EC2 Spot Fleet",
+        "",
+        f"Worker: {socket.gethostname()}",
+        "",
+        f"Input: {input_key}",
+        "",
+        "Processing: SQS Distributed Job",
+        "",
+        "Status: COMPLETED",
+    ]
+
+    y = 82
+    for line in lines:
+        draw.text((80, y), line, fill="black", font=font)
+        y += 40 if line else 38
+
+    canvas.save(output_file, format="PNG")
 
 
 while True:
@@ -63,9 +103,7 @@ while True:
 
         s3.download_file(INPUT_BUCKET, input_key, input_file)
 
-        with Image.open(input_file) as image:
-            image.thumbnail((800, 800))
-            image.save(output_file, format="PNG")
+        render_details(output_file, job_id, input_key)
 
         output_key = f"{job_id}-rendered.png"
         s3.upload_file(output_file, OUTPUT_BUCKET, output_key)
